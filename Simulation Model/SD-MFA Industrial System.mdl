@@ -1,0 +1,1183 @@
+{UTF-8}
+Inflow Disposal SD=Flow use to WM-Flow WM to Recycling SD
+	~	ton/Year
+	~		|
+
+Flow WM to Recycling SD=Flow use to WM*Recycling fraction SD
+	~	ton/Year
+	~		|
+
+Potential Fab to Use=Demand index*Fabrication
+	~	ton/Year
+	~		|
+
+Total Mass Expected in SD= INTEG (Primary input SD,
+		0)
+	~	ton
+	~		|
+
+Total Mass in System SD=Disposal SD+Use SD+Recycling SD
+	~	ton
+	~		|
+
+Flow Fab to Use=MIN ( Fabrication capacity SD , Potential Fab to Use )
+	~	ton/Year
+	~		|
+
+Recycling fraction SD=0.18
+	~	Dmnl
+	~		|
+
+Flow Recycling to Smelting SD=MIN ( Recycling SD , Recycling capacity SD )
+	~	ton/Year
+	~		|
+
+"Smelting & Fabrication"=Primary input SD+Flow Recycling to Smelting SD
+	~	ton/Year
+	~		|
+
+Fabrication="Smelting & Fabrication"
+	~	ton/Year
+	~		|
+
+Total Mass Balance SD=Total Mass Expected in SD-Total Mass in System SD
+	~	ton
+	~		~	:SUPPLEMENTARY 
+	|
+
+Recycling SD= INTEG (Flow WM to Recycling SD-Flow Recycling to Smelting SD,
+		0)
+	~	ton
+	~		|
+
+Disposal SD= INTEG (Inflow Disposal SD,
+		0)
+	~	ton
+	~		|
+
+Primary input SD=
+	100
+	~	ton/Year
+	~		|
+
+Fabrication input demand limited=Demand Use/Use Fraction
+	~	ton/Year
+	~		|
+
+Base demand use=100
+	~	ton/Year
+	~		|
+
+Recycling share1=IF THEN ELSE( Smelting inflow > 0 , Flow Recycling to smelting / Smelting inflow\
+		, 0 )
+	~	Dmnl
+	~		|
+
+Recycling share=IF THEN ELSE( Recycling capacity SD+Fabrication capacity SD > 0 , Recycling capacity SD\
+		 / (Recycling capacity SD+Fabrication capacity SD
+	) , 0 )
+	~	Dmnl
+	~		|
+
+Investment in Recycling=Investment sensitivity recycling*Profitability Recycling
+	~	1/Year
+	~		|
+
+Depreciation Recycling=Depreciation rate recycling*Recycling capacity SD
+	~	1/Year
+	~		|
+
+Smelting inflow=Flow Recycling to smelting+Primary input
+	~	ton/Year
+	~		|
+
+Smelting SDMFA= INTEG (Smelting inflow-Fabrication input1,
+		0)
+	~	ton
+	~		|
+
+Demand Use=Base demand use*Demand index1
+	~	ton/Year
+	~		|
+
+Total Mass Balance=Total Mass in system-Total Mass Expected
+	~	ton
+	~		~	:SUPPLEMENTARY 
+	|
+
+Total Mass Expected= INTEG (Primary input,
+		0)
+	~	ton
+	~		|
+
+Total Mass in system=Disposal SDMFA+Recycling SDMFA+Use SDMFA+Smelting SDMFA
+	~	ton
+	~		|
+
+Primary input=
+	Base primary input
+	~	ton/Year
+	~		|
+
+Fabrication input1=MIN( Smelting inflow , MIN( Fabrication capacity SDMFA , Fabrication input demand limited\
+		) )
+	~	ton/Year
+	~		|
+
+Fab to Use=Fabrication input1*Use Fraction
+	~	ton/Year
+	~		|
+
+Fab to WM=Fabrication input1*Scrap Fraction
+	~	ton/Year
+	~		|
+
+Recycling capacity SD= INTEG (Investment in Recycling-Depreciation Recycling,
+		20)
+	~	ton/Year
+	~		|
+
+Disposal DMFA= INTEG (Landfill inflow,
+		0)
+	~	ton
+	~		~	:SUPPLEMENTARY 
+	|
+
+Disposal SDMFA= INTEG (Flow WM to Disposal,
+		0)
+	~	ton
+	~	stok material dalam fase penggunaan (produk sedang dipakai).
+	|
+
+Profitability=Market price-Production cost
+	~	$/ton
+	~		|
+
+WM to Disposal=Total Waste to Management-Flow WM to Recycling
+	~	ton/Year
+	~		|
+
+Base market price=2
+	~	$/ton
+	~	Harga pasar normal (tanpa intervensi kebijakan / subsidi / recycling).
+		Dipakai untuk menghitung indeks harga:
+		
+		Price_Index = Market_Price / Base_Market_Price
+		Sehingga model tahu apakah harga:
+			•	lebih mahal dari normal → konsumsi turun
+			•	lebih murah dari normal → konsumsi naik
+	|
+
+Base primary input=100
+	~	ton/Year
+	~		|
+
+Base virgin cost=1.6
+	~	$/ton
+	~	Biaya produksi bila 100% bahan baku virgin (non-recycled).
+		Ini menggambarkan:
+			•	harga resin plastik virgin
+			•	harga energi
+			•	harga bahan baku kimia
+		Ini menjadi baseline untuk menghitung penurunan biaya akibat peningkatan \
+		recycled share.
+	|
+
+Base virgin cost1=
+	1.6
+	~	$/ton
+	~		|
+
+Demand index=MAX ( 0 , 1 - (Price index - 1) * Price sensitivity )
+	~	Dmnl
+	~		|
+
+Demand index1=MAX( 0 , 1 - (Price index1 - 1) * Price sensitivity1 )
+	~	Dmnl
+	~		|
+
+Depreciation Fab=Depreciation rate of Fab*Fabrication capacity SDMFA
+	~	1/Year
+	~		|
+
+Depreciation fabrication=Depreciation rate*Fabrication capacity SD
+	~	1/Year
+	~		|
+
+Depreciation of Recycling=Depreciation rate of Rec*Recycling Capacity SDMFA
+	~	1/Year
+	~		|
+
+Depreciation rate=
+	0.05
+	~	Year
+	~		|
+
+Depreciation rate of Fab=
+	0.05
+	~	Year
+	~		|
+
+Depreciation rate of Rec=0.06
+	~	Year
+	~		|
+
+Depreciation rate recycling=0.06
+	~	Year
+	~	Tingkat penurunan kapasitas recycling karena aging, maintenance, teknologinya cepat \
+		berubah.
+		
+		Interpretasi waktu pakai
+		
+		Umur fasilitas recycling ≈ 1 / 0.06 ≈ 16.7 tahun
+		Lebih pendek dari pabrik fabrikasi, karena fasilitas recycling lebih \
+		sering diganti/upgrade.
+	|
+
+Fabrication capacity SD= INTEG (Investment in Fabrication-Depreciation fabrication,
+		Initial fabrication)
+	~	ton/Year
+	~		|
+
+Fabrication capacity SDMFA= INTEG (Investment to Fab-Depreciation Fab,
+		100)
+	~	ton/Year
+	~	kapasitas fabrikasi tahunan (kemampuan industri memproduksi produk)
+	|
+
+Price index=Market price/Base market price
+	~	Dmnl
+	~		|
+
+Flow Fab to Use1=Fab to Use
+	~	ton/Year
+	~		|
+
+Flow Recycling to smelting=Recycling SDMFA/Recycling time
+	~	ton/Year
+	~		|
+
+Flow Retirement=Use SDMFA/Lifetime
+	~	ton/Year
+	~		|
+
+Flow use to WM=Use SD/Lifetime product
+	~	ton/Year
+	~		|
+
+Flow WM to Disposal=WM to Disposal
+	~	ton/Year
+	~		|
+
+Flow WM to Recycling=MIN(Total Waste to Management * Recycling Fraction , Recycling Capacity SDMFA\
+		 )
+	~	ton/Year
+	~		|
+
+Investment sensitivity Fab=0.035
+	~	1/Year
+	~		|
+
+Initial fabrication=100
+	~	ton/Year
+	~		|
+
+Use SDMFA= INTEG (Flow Fab to Use1-Flow Retirement,
+		0)
+	~	ton
+	~	stok material dalam fase penggunaan (produk sedang dipakai).
+	|
+
+Investment in Fabrication=Investment sensitivity fabrication*Profitability
+	~	1/Year
+	~		|
+
+Investment to Recycling=Investment sensitivity Rec*Profitability1
+	~	1/Year
+	~		|
+
+Investment sensitivity fabrication=0.035
+	~	Year
+	~	Tingkat sensitivitas investasi terhadap profitabilitas di sektor fabrikasi.
+		Artinya:
+		bila profitabilitas naik 1 unit → kapasitas fabrikasi bertambah 0.035 unit per \
+		tahun.
+		
+		Kenapa nilainya kecil?
+		Karena investasi tidak langsung 1:1 dengan profit — keuntungan naik \
+		sedikit tidak langsung menambah kapasitas besar. Nilai 0.035/Year \
+		artinya sistem pabrik bereaksi pelan terhadap profit (realistis untuk \
+		industri berat seperti plastik, kimia, baja, aluminium).
+	|
+
+Investment sensitivity Rec=
+	0.04
+	~	Year
+	~		|
+
+Investment sensitivity recycling=0.04
+	~	Year
+	~	Tingkat sensitivitas investasi terhadap profitabilitas pada sektor daur ulang.
+		Biasanya lebih sensitif dari fabrikasi karena:
+			•	investasi recycling lebih murah
+			•	teknologi recycling berkembang cepat
+			•	kebijakan sering mendukung recycling
+		Bila profitabilitas recycling naik 1 unit → kapasitas recycling bertambah 0.04 \
+		unit per tahun.
+		📌 Kenapa sedikit lebih tinggi dari 0.035?
+		Untuk mencerminkan bahwa recycling tumbuh lebih responsif terhadap \
+		insentif ekonomi dibanding fabrikasi.
+	|
+
+Investment to Fab=Investment sensitivity Fab*Profitability1
+	~	Year*$/ton
+	~		|
+
+Lifetime product=10
+	~	Year
+	~		|
+
+Price index1=Market price1/Base market price
+	~	Dmnl
+	~		|
+
+Lifetime=
+	10
+	~	Year
+	~		|
+
+Markup1=
+	1.25
+	~	Dmnl
+	~		|
+
+Recycling SDMFA= INTEG (Flow WM to Recycling-Flow Recycling to smelting,
+		0)
+	~	ton
+	~	material yang sedang “antri” di fasilitas recycling sebelum kembali ke \
+		smelting
+	|
+
+Market price=Markup*Production cost
+	~	$/ton
+	~		|
+
+Market price1=Markup1*Production cost1
+	~	$/ton
+	~		|
+
+Markup=1.25
+	~	Dmnl
+	~	Markup adalah multiplier harga jual di atas biaya produksi.
+		
+		Market_Price = Production_Cost * Markup
+		Markup 1.25 artinya:
+		produsen mengambil margin 25% dari biaya produksi
+		Markup bisa berubah sebagai parameter strategi bisnis tanpa memengaruhi \
+		mass balance.
+	|
+
+Price sensitivity1=
+	0.7
+	~	Dmnl
+	~		|
+
+Profitability1=Market price1-Production cost1
+	~	$/ton
+	~		|
+
+Production cost=Base virgin cost * (1-Recycling share)
+	~	$/ton
+	~		|
+
+Production cost1=Base virgin cost1 * (1 - Recycling share1)
+	~	$/ton
+	~		|
+
+Price sensitivity=0.7
+	~	Dmnl
+	~	Seberapa kuat konsumen merespons perubahan harga.
+		Masuk ke rumus:
+		
+		Demand_Index = 1 - (Price_Index - 1) * Price_Sensitivity
+		
+		0.1 = Konsumen tidak peduli harga
+		0.7 = Konsumen sensitif harga
+		>1 = Konsumen sangat sensitiif; sedikit perubahan harga menyebabkab \
+		permintaan berubah drastis
+	|
+
+Profitability Recycling=Profitability*Recycling share
+	~	$/ton
+	~		|
+
+Recycling time=
+	1
+	~	Year
+	~		|
+
+Total Waste to Management=Fab to WM+Use to WM
+	~	ton/Year
+	~		|
+
+Waste management to landfill=WM-Waste management to Recycling
+	~	ton/Year
+	~		|
+
+Recycling Capacity SDMFA= INTEG (Investment to Recycling-Depreciation of Recycling,
+		20)
+	~	ton/Year
+	~	kapasitas recycling tahunan (kapasitas fasilitas daur ulang)
+	|
+
+Use to WM=Flow Retirement
+	~	ton/Year
+	~		|
+
+Use SD= INTEG (Flow Fab to Use-Flow use to WM,
+		0)
+	~	ton
+	~		|
+
+Balance smelting=(Mining to Smelting+Recyling outflow) - (Fabrication to Use+Fabrication to Waste management\
+		)
+	~	ton/Year
+	~		~	:SUPPLEMENTARY 
+	|
+
+Fabrication to Use=Smelting to Fabrication*Use Fraction
+	~	ton/Year
+	~		|
+
+Fabrication to Waste management=Smelting to Fabrication*Scrap Fraction
+	~	ton/Year
+	~		|
+
+Use DMFA= INTEG (In use stock inflow-In use stock outflow,
+		0)
+	~	ton
+	~		|
+
+In use stock inflow=Fabrication to Use
+	~	ton/Year
+	~		|
+
+In use stock outflow=Use DMFA/Lifetime Distribution
+	~	ton/Year
+	~		|
+
+Input to Mining=100
+	~	ton/Year
+	~		|
+
+Landfill inflow=Waste management to landfill
+	~	ton/Year
+	~		|
+
+Lifetime Distribution=
+	10
+	~	Year
+	~		|
+
+Mining to Smelting=Input to Mining
+	~	ton/Year
+	~		|
+
+Recycling Fraction=
+	0.18
+	~	Dmnl
+	~		|
+
+Recycling DMFA= INTEG (Recyling inflow-Recyling outflow,
+		0)
+	~	ton
+	~		|
+
+Recyling inflow=Waste management to Recycling
+	~	ton/Year
+	~		|
+
+Recyling outflow=Recycling DMFA
+	~	ton/Year
+	~		|
+
+Scrap Fraction=
+	0.25
+	~	Dmnl
+	~		|
+
+Smelting to Fabrication=Mining to Smelting+Recyling outflow
+	~	ton/Year
+	~		|
+
+Use Fraction=
+	0.75
+	~	Dmnl
+	~		|
+
+Use to Waste management=In use stock outflow
+	~	ton/Year
+	~		|
+
+Waste management to Recycling=WM*Recycling Fraction
+	~	ton/Year
+	~		|
+
+WM=Fabrication to Waste management+Use to Waste management
+	~	ton/Year
+	~		|
+
+WM Balance=(Fabrication to Waste management+Use to Waste management) - (Waste management to landfill\
+		+Waste management to Recycling)
+	~	ton/Year
+	~		~	:SUPPLEMENTARY 
+	|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 100
+	~	Year
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Year
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Year [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 1
+	~	Year [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*SD Only
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,79,2
+10,1,Fabrication capacity SD,306,563,56,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,2,48,78,561,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,3,5,2,100,0,0,22,0,192,0,-1--1--1,,1|(132,561)|
+1,4,5,1,4,0,0,22,0,192,0,-1--1--1,,1|(219,561)|
+11,5,0,182,561,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,6,Investment in Fabrication,182,591,61,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,7,48,609,563,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,8,10,1,100,0,0,22,0,192,0,-1--1--1,,1|(405,563)|
+1,9,10,7,4,0,0,22,0,192,0,-1--1--1,,1|(530,563)|
+11,10,0,455,563,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,11,Depreciation fabrication,455,593,59,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,12,Market price,445,192,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,13,Production cost,292,204,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,14,Recycling share,9,362,62,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,15,Price sensitivity,731,204,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,16,Lifetime product,455,690,52,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,17,Use SD,295,804,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,18,48,91,803,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,19,21,18,100,0,0,22,0,192,0,-1--1--1,,1|(136,803)|
+1,20,21,17,4,0,0,22,0,192,0,-1--1--1,,1|(218,803)|
+11,21,0,177,803,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,22,Flow Fab to Use,177,833,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,23,48,503,804,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,24,26,17,100,0,0,22,0,192,0,-1--1--1,,1|(373,804)|
+1,25,26,23,4,0,0,22,0,192,0,-1--1--1,,1|(457,804)|
+11,26,0,415,804,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,27,Flow use to WM,415,834,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,28,Demand index,617,337,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,29,Price index,603,202,42,22,8,3,0,0,-1,1,0,0,0,0,0,0,0,0
+10,30,Markup,426,91,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,31,17,27,1,0,0,0,0,192,0,-1--1--1,,1|(357,749)|
+1,32,1,22,1,0,0,0,0,192,0,-1--1--1,,1|(275,696)|
+1,33,16,27,1,0,0,0,0,192,0,-1--1--1,,1|(458,753)|
+10,34,Profitability,409,351,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,35,Investment sensitivity fabrication,75,503,53,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,36,34,6,1,0,0,0,0,192,0,-1--1--1,,1|(236,440)|
+1,37,35,6,1,0,0,0,0,192,0,-1--1--1,,1|(97,554)|
+10,38,Depreciation rate,510,485,43,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,39,1,11,1,0,0,0,0,192,0,-1--1--1,,1|(381,543)|
+1,40,38,11,1,0,0,0,0,192,0,-1--1--1,,1|(460,531)|
+10,41,Profitability Recycling,206,343,43,47,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,42,Investment sensitivity recycling,-620,247,53,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,43,Depreciation rate recycling,-275,247,43,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,44,1,14,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,45,Base virgin cost,209,83,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,46,45,13,1,0,0,0,0,192,0,-1--1--1,,1|(260,140)|
+1,47,14,13,1,0,0,0,0,192,0,-1--1--1,,1|(128,252)|
+1,48,13,12,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,49,30,12,1,0,0,0,0,192,0,-1--1--1,,1|(405,138)|
+10,50,Base market price,648,90,44,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,51,12,29,1,0,0,0,0,192,0,-1--1--1,,1|(529,217)|
+1,52,50,29,1,0,0,0,0,192,0,-1--1--1,,1|(631,155)|
+1,53,29,28,1,0,0,0,0,192,0,-1--1--1,,1|(586,271)|
+1,54,15,28,1,0,0,0,0,192,0,-1--1--1,,1|(709,283)|
+1,55,12,34,1,0,0,0,0,192,0,-1--1--1,,1|(416,251)|
+1,56,13,34,1,0,0,0,0,192,0,-1--1--1,,1|(337,284)|
+1,57,34,41,1,0,0,0,0,192,0,-1--1--1,,1|(290,351)|
+1,58,14,41,1,0,0,0,0,192,0,-1--1--1,,1|(98,372)|
+10,59,Initial fabrication,392,464,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,60,59,1,1,0,0,0,0,192,1,-1--1--1,,1|(333,509)|
+10,61,Recycling capacity SD,-406,322,52,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,62,48,-622,318,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,63,65,62,100,0,0,22,0,192,0,-1--1--1,,1|(-574,318)|
+1,64,65,61,4,0,0,22,0,192,0,-1--1--1,,1|(-491,318)|
+11,65,0,-531,318,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,66,Investment in Recycling,-531,348,57,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,67,48,-177,327,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,68,70,61,100,0,0,22,0,192,0,-1--1--1,,1|(-323,327)|
+1,69,70,67,4,0,0,22,0,192,0,-1--1--1,,1|(-234,327)|
+11,70,0,-287,327,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,71,Depreciation Recycling,-287,357,55,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,72,41,66,1,0,0,0,0,192,0,-1--1--1,,1|(-114,145)|
+1,73,42,66,1,0,0,0,0,192,0,-1--1--1,,1|(-566,272)|
+1,74,43,71,1,0,0,0,0,192,0,-1--1--1,,1|(-257,311)|
+1,75,61,71,1,0,0,0,0,192,0,-1--1--1,,1|(-347,289)|
+1,76,61,14,1,0,0,0,0,192,0,-1--1--1,,1|(-341,385)|
+10,77,Disposal SD,956,770,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,78,48,727,776,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,79,81,78,100,0,0,22,0,192,0,-1--1--1,,1|(778,776)|
+1,80,81,77,4,0,0,22,0,192,0,-1--1--1,,1|(872,776)|
+11,81,0,825,776,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,82,Inflow Disposal SD,825,806,45,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,83,27,82,1,0,0,0,0,192,0,-1--1--1,,1|(632,886)|
+10,84,Primary input SD,-752,795,42,22,8,3,0,6,-1,1,0,0,-1--1--1,255-255-255,|||0-0-0,0,0,0,0,0,0
+10,85,Base demand use,-398,730,54,13,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,86,Potential Fab to Use,-59,811,53,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,87,86,22,1,0,0,0,0,192,0,-1--1--1,,1|(81,757)|
+10,88,"Smelting & Fabrication",-529,806,59,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,89,Fabrication,-222,817,46,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,90,84,88,1,0,0,0,0,192,0,-1--1--1,,1|(-685,763)|
+1,91,88,89,1,0,0,0,0,192,0,-1--1--1,,1|(-341,744)|
+1,92,89,86,1,0,0,0,0,192,0,-1--1--1,,1|(-127,870)|
+10,93,Total Mass in System SD,1505,717,63,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,94,Total Mass Expected in SD,1980,722,60,26,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,95,Use SD,1373,652,29,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,96,Disposal SD,1382,817,40,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,97,Primary input SD,2175,723,52,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,98,95,93,1,0,0,0,0,192,0,-1--1--1,,1|(1441,647)|
+1,99,96,93,1,0,0,0,0,192,0,-1--1--1,,1|(1498,811)|
+1,100,97,94,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,101,Total Mass Balance SD,1743,715,59,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,102,93,101,1,0,0,0,0,192,0,-1--1--1,,1|(1594,667)|
+1,103,94,101,1,0,0,0,0,192,0,-1--1--1,,1|(1871,651)|
+10,104,Recycling SD,-410,571,46,26,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,105,48,-169,565,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,106,108,105,100,0,0,22,0,192,0,-1--1--1,,1|(-222,565)|
+1,107,108,104,4,0,0,22,0,192,0,-1--1--1,,1|(-321,565)|
+11,108,0,-272,565,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,109,Flow WM to Recycling SD,-272,599,64,26,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,110,48,-686,571,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,111,113,104,100,0,0,22,0,192,0,-1--1--1,,1|(-508,571)|
+1,112,113,110,4,0,0,22,0,192,0,-1--1--1,,1|(-624,571)|
+11,113,0,-566,571,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,114,Flow Recycling to Smelting SD,-566,605,46,26,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,115,Recycling fraction SD,-358,484,55,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,116,115,109,1,0,0,0,0,192,0,-1--1--1,,1|(-288,521)|
+1,117,61,114,1,0,0,0,0,192,0,-1--1--1,,1|(-485,374)|
+1,118,104,114,1,0,0,0,0,192,0,-1--1--1,,1|(-491,632)|
+1,119,114,88,1,0,0,0,0,192,0,-1--1--1,,1|(-581,704)|
+10,120,Recycling SD,1342,729,41,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,121,120,93,1,0,0,0,0,192,0,-1--1--1,,1|(1428,741)|
+12,122,0,1725,211,477,254,8,15,0,0,1,0,0,0,0,0,0,0,0,0
+Mass_Balance_SD
+10,123,Recycling capacity SD,-1075,1307,62,13,8,2,1,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,124,Demand index,-51,717,46,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,125,124,86,1,0,0,0,0,192,0,-1--1--1,,1|(-102,756)|
+10,126,Flow WM to Recycling SD,928,575,59,20,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,127,126,82,1,0,0,0,0,192,0,-1--1--1,,1|(867,587)|
+10,128,Flow use to WM,-76,609,49,13,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,129,128,109,1,0,0,0,0,192,0,-1--1--1,,1|(-210,647)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*SD With MFA Concept
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,71,2
+10,1,Use SDMFA,1094,667,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,Disposal SDMFA,1391,987,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,3,Base primary input,-347,681,47,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,4,Recycling SDMFA,554,950,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,5,Recycling Capacity SDMFA,1159,489,60,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,6,48,957,488,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,7,9,6,100,0,0,22,0,192,0,-1--1--1,,1|(992,488)|
+1,8,9,5,4,0,0,22,0,192,0,-1--1--1,,1|(1064,488)|
+11,9,0,1024,488,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,10,Investment to Recycling,1024,517,41,21,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,11,48,1417,489,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,12,14,5,100,0,0,22,0,192,0,-1--1--1,,1|(1259,489)|
+1,13,14,11,4,0,0,22,0,192,0,-1--1--1,,1|(1359,489)|
+11,14,0,1305,489,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,15,Depreciation of Recycling,1305,519,61,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,16,Fabrication capacity SDMFA,216,450,51,22,3,3,0,0,-1,1,0,0,0,0,0,0,0,0
+12,17,48,13,451,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,18,20,17,100,0,0,22,0,192,0,-1--1--1,,1|(55,451)|
+1,19,20,16,4,0,0,22,0,192,0,-1--1--1,,1|(132,451)|
+11,20,0,94,451,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,21,Investment to Fab,94,481,44,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,22,48,386,450,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,23,25,16,100,0,0,22,0,192,0,-1--1--1,,1|(306,450)|
+1,24,25,22,4,0,0,22,0,192,0,-1--1--1,,1|(366,450)|
+11,25,0,351,450,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,26,Depreciation Fab,351,480,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,27,Demand index1,599,414,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,28,Price index1,547,317,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,29,Market price1,1126,351,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,30,Production cost1,1272,276,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,31,Recycling share1,873,267,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,32,Base virgin cost1,1418,355,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,33,31,30,1,0,0,0,0,192,0,-1--1--1,,1|(1019,222)|
+1,34,32,30,1,0,0,0,0,192,0,-1--1--1,,1|(1348,277)|
+10,35,Markup1,1233,406,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,36,35,29,1,0,0,0,0,192,0,-1--1--1,,1|(1165,402)|
+1,37,30,29,1,0,0,0,0,192,0,-1--1--1,,1|(1183,309)|
+10,38,Price sensitivity1,683,326,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,39,28,27,1,0,0,0,0,192,0,-1--1--1,,1|(554,384)|
+1,40,38,27,1,0,0,0,0,192,0,-1--1--1,,1|(633,362)|
+10,41,Profitability1,953,393,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,42,29,41,1,0,0,0,0,192,0,-1--1--1,,1|(1041,360)|
+1,43,30,41,1,0,0,0,0,192,0,-1--1--1,,1|(1055,280)|
+10,44,Investment sensitivity Rec,881,478,62,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,45,41,10,1,0,0,0,0,192,0,-1--1--1,,1|(1013,458)|
+1,46,44,10,1,0,0,0,0,192,0,-1--1--1,,1|(932,530)|
+10,47,Investment sensitivity Fab,29,558,62,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,48,Profitability1,138,367,38,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,49,47,21,1,0,0,0,0,192,0,-1--1--1,,1|(95,513)|
+1,50,48,21,1,0,0,0,0,192,0,-1--1--1,,1|(77,412)|
+10,51,Depreciation rate of Rec,1358,418,58,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,52,Depreciation rate of Fab,441,370,59,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,53,51,15,1,0,0,0,0,192,0,-1--1--1,,1|(1307,450)|
+1,54,52,26,1,0,0,0,0,192,0,-1--1--1,,1|(347,420)|
+1,55,16,26,1,0,0,0,0,192,0,-1--1--1,,1|(270,502)|
+1,56,5,15,1,0,0,0,0,192,0,-1--1--1,,1|(1220,559)|
+12,57,48,795,667,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,58,60,57,100,0,0,22,0,192,0,-1--1--1,,1|(852,667)|
+1,59,60,1,4,0,0,22,0,192,0,-1--1--1,,1|(981,667)|
+11,60,0,905,667,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,61,Flow Fab to Use1,905,697,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,62,48,1331,667,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,63,65,1,100,0,0,22,0,192,0,-1--1--1,,1|(1179,667)|
+1,64,65,62,4,0,0,22,0,192,0,-1--1--1,,1|(1277,667)|
+11,65,0,1228,667,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,66,Flow Retirement,1228,697,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,67,Lifetime,1342,614,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,68,1,66,1,0,0,0,0,192,0,-1--1--1,,1|(1144,615)|
+1,69,67,66,1,0,0,0,0,192,0,-1--1--1,,1|(1281,636)|
+12,70,48,1140,985,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,71,73,70,100,0,0,22,0,192,0,-1--1--1,,1|(1196,985)|
+1,72,73,2,4,0,0,22,0,192,0,-1--1--1,,1|(1302,985)|
+11,73,0,1249,985,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,74,Flow WM to Disposal,1249,1015,51,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,75,48,815,952,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,76,78,75,100,0,0,22,0,192,0,-1--1--1,,1|(753,952)|
+1,77,78,4,4,0,0,22,0,192,0,-1--1--1,,1|(642,952)|
+11,78,0,695,952,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,79,Flow WM to Recycling,695,982,52,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,80,48,205,942,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,81,83,4,100,0,0,22,0,192,0,-1--1--1,,1|(444,942)|
+1,82,83,80,4,0,0,22,0,192,0,-1--1--1,,1|(289,942)|
+11,83,0,370,942,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,84,Flow Recycling to smelting,370,972,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,85,4,84,1,0,0,0,0,192,0,-1--1--1,,1|(460,993)|
+10,86,Recycling time,470,882,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,87,86,84,1,0,0,0,0,192,0,-1--1--1,,1|(413,914)|
+10,88,Primary input,-209,593,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,89,3,88,1,0,0,0,0,192,0,-1--1--1,,1|(-284,666)|
+10,90,Fab to Use,604,658,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,91,90,61,1,0,0,0,0,192,0,-1--1--1,,1|(729,621)|
+10,92,Use Fraction,477,594,37,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,93,92,90,1,0,0,0,0,192,0,-1--1--1,,1|(522,639)|
+10,94,Fab to WM,761,801,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,95,Scrap Fraction,820,746,41,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,96,95,94,1,0,0,0,0,192,0,-1--1--1,,1|(777,765)|
+10,97,Use to WM,1280,777,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,98,62,97,1,0,0,0,0,192,0,-1--1--1,,1|(1325,726)|
+10,99,Total Waste to Management,1050,893,49,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,100,94,99,1,0,0,0,0,192,0,-1--1--1,,1|(944,827)|
+1,101,97,99,1,0,0,0,0,192,0,-1--1--1,,1|(1191,836)|
+10,102,Recycling Fraction,852,882,40,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,103,WM to Disposal,1048,981,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,104,99,103,1,0,0,0,0,192,0,-1--1--1,,1|(1047,933)|
+1,105,84,31,1,0,0,0,0,192,0,-1--1--1,,1|(556,563)|
+10,106,Base market price,668,197,50,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,107,Market price1,547,159,40,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,108,107,28,1,0,0,0,0,192,0,-1--1--1,,1|(492,248)|
+1,109,106,28,1,0,0,0,0,192,0,-1--1--1,,1|(659,279)|
+1,110,103,74,1,0,0,0,0,192,0,-1--1--1,,1|(1167,1049)|
+1,111,99,79,1,0,0,0,0,192,0,-1--1--1,,1|(827,988)|
+1,112,102,79,1,0,0,0,0,192,0,-1--1--1,,1|(744,932)|
+1,113,5,79,1,0,0,0,0,192,0,-1--1--1,,1|(839,743)|
+1,114,79,103,1,0,0,0,0,192,0,-1--1--1,,1|(902,1014)|
+10,115,Base demand use,489,482,44,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,116,Demand Use,656,482,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,117,115,116,1,0,0,0,0,192,0,-1--1--1,,1|(553,498)|
+1,118,27,116,1,0,0,0,0,192,0,-1--1--1,,1|(682,433)|
+10,119,Total Mass in system,1737,846,51,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,120,Use SDMFA,1580,848,17,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,121,Recycling SDMFA,1589,919,29,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,122,Disposal SDMFA,1682,963,28,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,123,Total Mass Expected,2053,851,50,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,124,Primary input,2207,858,40,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,125,120,119,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,126,121,119,1,0,0,0,0,192,0,-1--1--1,,1|(1671,901)|
+1,127,122,119,1,0,0,0,0,192,0,-1--1--1,,1|(1728,931)|
+10,128,Total Mass Balance,1900,832,47,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,129,119,128,1,0,0,0,0,192,0,-1--1--1,,1|(1855,865)|
+1,130,123,128,1,0,0,0,0,192,0,-1--1--1,,1|(1984,871)|
+1,131,124,123,0,0,0,0,0,192,0,-1--1--1,,1|(0,0)|
+12,132,0,2587,445,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+Use__recycling_and_disposal_stock
+12,133,0,2598,971,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+Total_Mass_in_System_vs_Total_Mass_Expected
+10,134,Fabrication input demand limited,219,574,62,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,135,116,134,1,0,0,0,1,192,0,0-0-255,|||0-0-0,1|(501,537)|
+1,136,92,134,1,0,0,0,0,192,0,-1--1--1,,1|(345,600)|
+10,137,Smelting SDMFA,2,679,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,138,48,-209,678,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,139,141,138,100,0,0,22,0,192,0,-1--1--1,,1|(-163,678)|
+1,140,141,137,4,0,0,22,0,192,0,-1--1--1,,1|(-78,678)|
+11,141,0,-121,678,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,142,Smelting inflow,-121,708,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,143,48,331,679,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,144,146,137,100,0,0,22,0,192,0,-1--1--1,,1|(84,679)|
+1,145,146,143,4,0,0,22,0,192,0,-1--1--1,,1|(228,679)|
+11,146,0,130,679,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,147,Fabrication input1,130,709,45,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,148,88,142,1,0,0,0,0,192,0,-1--1--1,,1|(-151,678)|
+1,149,84,142,1,0,0,0,0,192,0,-1--1--1,,1|(63,924)|
+1,150,16,147,1,0,0,0,0,192,0,-1--1--1,,1|(136,573)|
+1,151,142,147,1,0,0,0,0,192,0,-1--1--1,,1|(10,733)|
+1,152,134,147,1,0,0,0,0,192,0,-1--1--1,,1|(151,646)|
+1,153,147,90,1,0,0,0,0,192,0,-1--1--1,,1|(361,718)|
+1,154,147,94,1,0,0,0,0,192,0,-1--1--1,,1|(415,781)|
+1,155,142,31,1,0,0,0,0,192,0,-1--1--1,,1|(246,181)|
+10,156,Smelting SDMFA,1613,773,28,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,157,156,119,1,0,0,0,0,192,0,-1--1--1,,1|(1694,790)|
+12,158,0,1869,366,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+MAss_Balance_SD-MFA
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Dynamic MFA
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,88,2
+10,1,Use DMFA,427,296,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,Disposal DMFA,447,812,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,3,Fabrication to Use,124,297,44,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,4,Lifetime Distribution,449,202,50,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,5,Input to Mining,-556,291,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,6,Recycling Fraction,189,511,48,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,7,Mining to Smelting,-332,286,46,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,8,Smelting to Fabrication,-123,293,56,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,9,Use to Waste management,563,551,50,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,10,Waste management to Recycling,239,581,55,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,11,Waste management to landfill,430,723,55,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,12,5,7,1,0,0,0,0,192,0,-1--1--1,,1|(-495,239)|
+1,13,7,8,1,0,0,0,0,192,0,-1--1--1,,1|(-237,256)|
+1,14,8,3,1,0,0,0,0,192,0,-1--1--1,,1|(-29,270)|
+12,15,48,225,296,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,16,18,15,100,0,0,22,0,192,0,-1--1--1,,1|(259,296)|
+1,17,18,1,4,0,0,22,0,192,0,-1--1--1,,1|(340,296)|
+11,18,0,289,296,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,19,In use stock inflow,289,326,45,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,20,48,661,296,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,21,23,1,100,0,0,22,0,192,0,-1--1--1,,1|(511,296)|
+1,22,23,20,4,0,0,22,0,192,0,-1--1--1,,1|(608,296)|
+11,23,0,560,296,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,24,In use stock outflow,560,326,49,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,25,48,181,811,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,26,28,25,100,0,0,22,0,192,0,-1--1--1,,1|(241,811)|
+1,27,28,2,4,0,0,22,0,192,0,-1--1--1,,1|(354,811)|
+11,28,0,298,811,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,29,Landfill inflow,298,841,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,30,11,29,1,0,0,0,0,192,0,-1--1--1,,1|(325,772)|
+1,31,3,19,1,0,0,0,0,192,0,-1--1--1,,1|(229,229)|
+1,32,4,24,1,0,0,0,0,192,0,-1--1--1,,1|(541,277)|
+1,33,20,9,1,0,0,0,0,192,0,-1--1--1,,1|(663,480)|
+1,34,1,24,1,0,0,0,0,192,0,-1--1--1,,1|(439,351)|
+10,35,Scrap Fraction,113,420,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,36,Fabrication to Waste management,312,428,50,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,37,35,36,1,0,0,0,0,192,0,-1--1--1,,1|(193,458)|
+1,38,6,10,1,0,0,0,0,192,0,-1--1--1,,1|(210,555)|
+10,39,Use Fraction,145,206,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,40,8,36,1,0,0,0,0,192,0,-1--1--1,,1|(106,383)|
+1,41,39,3,1,0,0,0,0,192,0,-1--1--1,,1|(111,237)|
+10,42,Recycling DMFA,-164,490,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,43,48,39,492,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,44,46,43,100,0,0,22,0,192,0,-1--1--1,,1|(-6,492)|
+1,45,46,42,4,0,0,22,0,192,0,-1--1--1,,1|(-88,492)|
+11,46,0,-47,492,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,47,Recyling inflow,-47,522,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,48,48,-342,490,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,49,51,42,100,0,0,22,0,192,0,-1--1--1,,1|(-235,490)|
+1,50,51,48,4,0,0,22,0,192,0,-1--1--1,,1|(-304,490)|
+11,51,0,-269,490,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,52,Recyling outflow,-269,520,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,53,10,47,1,0,0,0,0,192,0,-1--1--1,,1|(42,592)|
+1,54,52,8,1,0,0,0,0,192,0,-1--1--1,,1|(-220,397)|
+1,55,42,52,1,0,0,0,0,192,0,-1--1--1,,1|(-192,559)|
+10,56,Balance smelting,1071,359,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,57,Mining to Smelting,915,262,51,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,58,Recyling outflow,899,433,46,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,59,Fabrication to Use,1247,272,50,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,60,Fabrication to Waste management,1244,470,53,16,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,61,57,56,1,0,0,0,0,192,0,-1--1--1,,1|(1062,294)|
+1,62,58,56,1,0,0,0,0,192,0,-1--1--1,,1|(1059,428)|
+1,63,60,56,1,0,0,0,0,192,0,-1--1--1,,1|(1130,435)|
+1,64,59,56,1,0,0,0,0,192,0,-1--1--1,,1|(1144,298)|
+10,65,Fabrication to Waste management,915,610,53,16,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,66,Use to Waste management,933,762,36,16,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,67,Waste management to landfill,1291,762,58,16,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,68,Waste management to Recycling,1268,590,58,16,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,69,Scrap Fraction,909,708,41,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,70,Recycling Fraction,1285,640,40,9,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,71,WM,412,552,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,72,36,71,1,0,0,0,0,192,0,-1--1--1,,1|(383,472)|
+1,73,9,71,1,0,0,0,0,192,0,-1--1--1,,1|(512,503)|
+1,74,71,10,1,0,0,0,0,192,0,-1--1--1,,1|(350,583)|
+1,75,71,11,1,0,0,0,0,192,0,-1--1--1,,1|(425,615)|
+10,76,WM Balance,1110,690,42,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,77,65,76,1,0,0,0,0,192,0,-1--1--1,,1|(1042,626)|
+1,78,66,76,1,0,0,0,0,192,0,-1--1--1,,1|(1015,725)|
+1,79,68,76,1,0,0,0,0,192,0,-1--1--1,,1|(1172,612)|
+1,80,67,76,1,0,0,0,0,192,0,-1--1--1,,1|(1146,721)|
+12,81,0,1125,-82,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+Mass_Balance
+1,82,10,11,1,0,0,0,0,192,0,-1--1--1,,1|(276,682)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Comparison
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,67,2
+12,1,0,424,888,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+Dynamic_MFA
+12,2,0,1061,887,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+SD_Without_MFA
+12,3,0,1714,886,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+SD_integrated_with_MFA
+12,4,0,425,437,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+Recycling_Comparison
+12,5,0,1061,439,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+Use_Comparison
+12,6,0,1719,438,300,200,0,15,0,0,1,0,0,0,0,0,0,0,0,0
+Disposal_Comparison
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*SD Without MFA
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,2
+///---\\\
+:GRAPH Check
+:TITLE Check
+:SCALE
+:VAR Fabrication capacity
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Market price
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Initial fabrication
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling capacity
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Mass_Balance
+:TITLE Mass Balance DMFA
+:SCALE
+:VAR Balance smelting
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Use__recycling_and_disposal_stock
+:TITLE Use, recycling and disposal stock
+:SCALE
+:VAR Use
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Disposal
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Total Mass Expected
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Total_Mass_in_System_vs_Total_Mass_Expected
+:TITLE Total Mass in System vs Total Mass Expected
+:SCALE
+:VAR Total Mass in system
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Total Mass Expected
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Dynamic_MFA
+:TITLE Dynamic MFA
+:SCALE
+:VAR Recycling DMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Disposal DMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Use DMFA
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH SD_Without_MFA
+:TITLE SD Without MFA
+:SCALE
+:VAR Use SD
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Fabrication capacity SD
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling capacity SD
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling SD
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH SD_integrated_with_MFA
+:TITLE SD integrated with MFA
+:SCALE
+:VAR Smelting SDMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Fabrication capacity SDMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Disposal SDMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling Capacity SDMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling SDMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Use SDMFA
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Mass_Balance_SD
+:TITLE Mass Balance SD
+:SCALE
+:VAR Total Mass Balance SD
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH MAss_Balance_SD-MFA
+:TITLE Mass Balance SD-MFA
+:SCALE
+:VAR Total Mass Balance
+:Y-MIN -5
+:Y-MAX 5
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Use_Comparison
+:TITLE Use Comparison
+:SCALE
+:VAR Use DMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Use SD
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Use SDMFA
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Recycling_Comparison
+:TITLE Recycling Comparison
+:SCALE
+:VAR Recycling SDMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling DMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Recycling SD
+:DATASET 
+:LINE-WIDTH 1
+
+:GRAPH Disposal_Comparison
+:TITLE Disposal Comparison
+:SCALE
+:VAR Disposal DMFA
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Disposal SD
+:DATASET 
+:LINE-WIDTH 1
+:SCALE
+:VAR Disposal SDMFA
+:DATASET 
+:LINE-WIDTH 1
+:L<%^E!@
+1:MFA.vdfx
+4:Time
+5:Disposal DMFA
+9:MFA
+19:88,2
+24:0
+25:100
+26:100
+11:Recycling Policy.voc
+100:Policy 1.voc
+12:Policy 2.vpd
+101:Policy.vpd
+23:0
+15:0,0,0,0,0,0
+27:0,
+34:0,
+42:0
+72:0
+73:0
+95:0
+96:0
+97:0
+77:0
+78:0
+102:1
+93:0
+94:0
+92:0
+91:0
+90:0
+87:0
+75:
+43:
+103:8,8,8,3,8
+105:0,0,0,0,0,0,0,0,0,0
+104:Vensim Sans|12||0-0-0|0-0-0|-1--1--1|0-0-255|192-192-192|-1--1--1
